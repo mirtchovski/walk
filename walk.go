@@ -12,18 +12,18 @@ import (
 	"path/filepath"
 )
 
-type stack struct {
+type queue struct {
 	name string
 	seen bool
 	cd   bool
-	next *stack
+	next *queue
 }
 
 var lstat = os.Lstat // for testing
 
 // Walkiter iteratively descends through a directory storing subdirectories
 // on s and calling walkFn for each file or directory it encounters
-func walkiter(s *stack, walkFn filepath.WalkFunc) (haderror error) {
+func walkiter(s *queue, walkFn filepath.WalkFunc) (haderror error) {
 	for {
 		if s == nil {
 			return haderror
@@ -77,7 +77,7 @@ func walkiter(s *stack, walkFn filepath.WalkFunc) (haderror error) {
 			}
 			file.Close()
 			for i := len(names) - 1; i >= 0; i-- {
-				ns := new(stack)
+				ns := new(queue)
 				ns.name = filepath.Join(ourname, names[i])
 				ns.next = s
 				s = ns
@@ -101,7 +101,7 @@ func Walk(root string, walkFn filepath.WalkFunc) error {
 	if err != nil {
 		return walkFn(root, nil, err)
 	}
-	s := new(stack)
+	s := new(queue)
 	s.name = root
 	return walkiter(s, walkFn)
 }
