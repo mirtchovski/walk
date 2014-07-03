@@ -9,6 +9,7 @@ package walk
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -91,6 +92,7 @@ func walkiter(s *queue, walkFn filepath.WalkFunc) (haderror error) {
 // each file it encounters. The walk will descend using Chdir, so that deeply nested
 // paths longer than PATH_MAX (1024 on OSX) would still be reachable.
 func Walk(root string, walkFn filepath.WalkFunc) error {
+	root = path.Clean(root)
 	dir, err := os.Getwd()
 	if err != nil {
 		return err // wouldn't want to leave caller in an unknown dir
