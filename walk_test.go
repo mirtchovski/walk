@@ -233,3 +233,13 @@ func TestWalkFileError(t *testing.T) {
 		t.Errorf("Walked %#v; want %#v", got, want)
 	}
 }
+
+func BenchmarkWalk(b *testing.B) {
+
+	for i := 0; i < b.N; i++ {
+		walk.Walk(".", func(path string, fi os.FileInfo, err error) error {
+			return err
+		})
+	}
+
+}
